@@ -48,6 +48,7 @@ export default class OrderManager extends LightningElement {
     setMaxValue(event) {
         this.maxValue = event.target.value;
     }
+    
 
     handleSuccess(event) {
         alert('Order Created');
