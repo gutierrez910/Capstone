@@ -12,8 +12,8 @@ export default class OrderManager extends LightningElement {
     minValue = 0;
     maxValue = 0;
     orderCreated = false;
-    displayList = false;
-    selectedItems = false;
+    @track displayList = false;
+    @track selectedItems = false;
     showFinalTable = false;
     @track value = '';
     @track openmodel = false;
@@ -111,6 +111,7 @@ export default class OrderManager extends LightningElement {
                     break;
                 }
             }
+            // To avoid multiple add to selected list
             if (!this.selectedProductsList.some(prod => prod.Id === selectedProduct.Id)) {
                 this.selectedProductsList.push(selectedProduct);
             }

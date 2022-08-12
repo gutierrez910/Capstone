@@ -1,8 +1,7 @@
 trigger EmailTrigger on Order (after insert, after update) {
-    if(trigger.isAfter && (trigger.isInsert || trigger.isUpdate)){
         
         list<Contact> conList = new list<Contact>([select Id,Name,Email,Email_Opt_Out__c from Contact where AccountId=:trigger.new[0].AccountId]);
-        
+        System.debug(trigger.new[0].AccountId);
         list<Account> acc = new list<Account>([select Id, Email_Opt_Out__c from Account where Id=:trigger.new[0].AccountId limit 1]);
         
         List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
@@ -21,8 +20,8 @@ trigger EmailTrigger on Order (after insert, after update) {
                         sendTo.add(con.Email);
                         mail.setToAddresses(sendTo);
                         
-                        mail.setReplyTo('adarshsingh5180@gmail.com');
-                        mail.setSenderDisplayName('Adarsh Singh');
+                        mail.setReplyTo('rommel.gutierrez910@gmail.com');
+                        mail.setSenderDisplayName('Rommel Gutierrez');
                         
                         mail.setSubject('Order Status Notification');
                         
@@ -38,5 +37,4 @@ trigger EmailTrigger on Order (after insert, after update) {
             }
         }
         Messaging.sendEmail(mails);
-    }
 }
