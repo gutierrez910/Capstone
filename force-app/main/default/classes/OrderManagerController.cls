@@ -76,11 +76,11 @@ public with sharing class OrderManagerController {
                 }
             }
         }
-        Order order=[Select Id,Stage__c,Pricebook2Id from Order where Id=:orderId];
+        Order order=[Select Id,MyStage__c,Pricebook2Id from Order where Id=:orderId];
         order.Pricebook2Id = priceBookId;
         
         System.debug('UPDATE ERROR:    ' + order.Pricebook2Id + '   '+order);
-        order.Stage__c = 'Created';
+        order.MyStage__c = 'Created';
         update order;
         System.debug('order detail '+order);
 
@@ -96,6 +96,7 @@ public with sharing class OrderManagerController {
                     break;
                 }
             }
+            // Free Items!! If customer buys more than 10 units
             if(Decimal.valueOf(product.Quantity)>10){
                 //orderItemList.add(new OrderItem(OrderId=orderId,Product2Id=product.Id,Quantity=1,UnitPrice=0,PricebookEntryId=product.PriceBookEntryId));
                 newProductList.add(new Product2(Id=product.Id, Stock_Quantity__c=productId.Stock_Quantity__c-Integer.valueOf(product.Quantity)));
@@ -106,7 +107,7 @@ public with sharing class OrderManagerController {
             
         }
         insert orderItemList;
-        order.Stage__c = 'In process';
+        order.MyStage__c = 'In process';
         update order;
         update newProductList;
 
@@ -116,8 +117,8 @@ public with sharing class OrderManagerController {
 
     @AuraEnabled
     public static string cancelOrder(String recordId){
-        Order order=[Select Id,Stage__c from Order where Id=:recordId];
-        order.Stage__c = 'Cancelled';
+        Order order=[Select Id,MyStage__c from Order where Id=:recordId];
+        order.MyStage__c = 'Cancelled';
         update order;
         return 'Successful';
     }

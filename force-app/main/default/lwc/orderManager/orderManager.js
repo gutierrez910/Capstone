@@ -9,6 +9,7 @@ export default class OrderManager extends LightningElement {
     @track recordId = '';
     @track orderAmount = '';
     @track singleValue = true;
+    hidestatus = false;
     minValue = 0;
     maxValue = 0;
     orderCreated = false;
@@ -16,7 +17,7 @@ export default class OrderManager extends LightningElement {
     @track selectedItems = false;
     showFinalTable = false;
     @track value = '';
-    @track openmodel = false;
+    @track openmodal = false;
     productList;
     desiredQuantity = 0;
     error;
@@ -170,7 +171,7 @@ export default class OrderManager extends LightningElement {
                 console.log(error);
             });
         this.showFinalTable = true;
-        this.openmodel = true;
+        this.openmodal = true;
     }
 
     cancelOrder() {
@@ -186,7 +187,7 @@ export default class OrderManager extends LightningElement {
     }
 
     closeModal() {
-        this.openmodel = false;
+        this.openmodal = false;
         const formFields = this.template.querySelectorAll('lightning-input-field');
         if (formFields) {
             formFields.forEach((field) => {
@@ -204,7 +205,7 @@ export default class OrderManager extends LightningElement {
         this.selectedItems = false;
         this.showFinalTable = false;
         this.value = '';
-        this.openmodel = false;
+        this.openmodal = false;
         this.desiredQuantity = 0;
         this.selectedProductsList = [];
     }

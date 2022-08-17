@@ -1,52 +1,54 @@
 <template>
-    <div class="slds-box  slds-theme_shade">
-        <div>
-            <!--Form to create order-->
-            <lightning-record-edit-form object-api-name="Order" id="createOrderForm" onsuccess={handleSuccess}>
-                <lightning-messages></lightning-messages>
-                <div class="slds-grid">
-                    <div class="slds-col slds-size_1-of-3">
-                        <lightning-input-field field-name="AccountId" required></lightning-input-field>
+    <div class="slds-box slds-theme_default">
+        <!--Form to create order-->
+        <template if:false={orderCreated}>
+            <div>
+                <lightning-record-edit-form object-api-name="Order" id="createOrderForm" onsuccess={handleSuccess}>
+                    <lightning-messages></lightning-messages>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-input-field field-name="AccountId" required></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-input-field field-name="EffectiveDate" required></lightning-input-field>
+                        </div>
                     </div>
-                    <div class="slds-col slds-size_1-of-3">
-                        <lightning-input-field field-name="EffectiveDate" required></lightning-input-field>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_1-of-3">
+                            <lightning-input-field field-name="Status" disabled></lightning-input-field>
+                        </div>
                     </div>
-                </div>
-                <div class="slds-grid">
-                    <div class="slds-col slds-size_1-of-3">
-                        <lightning-input-field field-name="Status" disabled></lightning-input-field>
-                    </div>
-                    <div class="slds-col slds-size_1-of-3">
-                        <lightning-input-field field-name="Stage__c" disabled></lightning-input-field>
-                    </div>
-                </div>
-                <lightning-button variant="brand" type="submit" label="Add Order"></lightning-button>
-            </lightning-record-edit-form>
-        </div>
+
+                    <lightning-button variant="brand" type="submit" label="Add Order"></lightning-button>
+                </lightning-record-edit-form>
+            </div>
+        </template>
 
         <!--Form to search products-->
-        <div class="slds-m-around_medium">
-            <lightning-radio-group name="searchCategory" label="Search Category" options={options} value={value}
-                type="radio" onchange={setCategory}></lightning-radio-group>
-            <div class="slds-grid" if:true={singleValue}>
-                <div class="slds-col slds-size_1-of-3">
-                    <lightning-input type="text" label="Search Products Here" onkeypress={searchProducts}>
-                    </lightning-input>
+        <template if:true={orderCreated}>
+            <div class="slds-m-around_medium">
+                <lightning-radio-group name="searchCategory" label="Search Category" options={options} value={value}
+                    type="radio" onchange={setCategory}></lightning-radio-group>
+                <div class="slds-grid" if:true={singleValue}>
+                    <div class="slds-col slds-size_1-of-3">
+                        <lightning-input type="text" label="Search Products Here" onchange={searchProducts}>
+                        </lightning-input>
+                    </div>
+                </div>
+                <div class="slds-grid" if:false={singleValue}>
+                    <div class="slds-col slds-size_1-of-3">
+                        <lightning-input type="number" label="Minimum amount" onchange={setMinValue} step="1">
+                        </lightning-input>
+                    </div>
+                    &nbsp;&nbsp; to &nbsp;&nbsp;
+                    <div class="slds-col slds-size_1-of-3">
+                        <lightning-input type="number" label="Maximum amount" min={maxValue} onchange={setMaxValue}
+                            onkeypress={searchProducts} step="1">
+                        </lightning-input>
+                    </div>
                 </div>
             </div>
-            <div class="slds-grid" if:false={singleValue}>
-                <div class="slds-col slds-size_1-of-3">
-                    <lightning-input type="number" label="Minimum amount" onchange={setMinValue} step="1">
-                    </lightning-input>
-                </div>
-                &nbsp;&nbsp; to &nbsp;&nbsp;
-                <div class="slds-col slds-size_1-of-3">
-                    <lightning-input type="number" label="Maximum amount" min={maxValue} onchange={setMaxValue}
-                        onkeypress={searchProducts} step="1">
-                    </lightning-input>
-                </div>
-            </div>
-        </div>
+        </template>
 
         <!--Search results-->
         <template if:true={displayList}>
@@ -108,7 +110,7 @@
                 </table>
             </div>
         </template>
-        <br /><br />
+
         <!--Selected products table-->
         <div if:true={selectedItems}>
             <h1>Selected Products List</h1><br />
@@ -157,7 +159,7 @@
                                     </td>
                                     <td>
                                         <div class="slds-truncate">
-                                            <lightning-input type="number" min="1" max={product.Stock_Quantity__c}
+                                            <lightning-input class="quantity" type="number" min="1" max={product.Stock_Quantity__c}
                                                 variant="label-hidden" name={product.Id} value={product.Quantity}
                                                 onchange={updateQuantity} required></lightning-input>
                                         </div>
@@ -184,7 +186,7 @@
         </div>
 
 
-        <br><br>
+        <!--Confirm and Cancel buttons-->
         <div if:true={selectedItems}>
             <br /><br />
             <lightning-button variant="brand" label="Confirm Order" onclick={saveOrderProducts}
@@ -194,7 +196,11 @@
             <lightning-button variant="brand" label="Cancel Order" onclick={cancelOrder} class="slds-m-left_x-small">
             </lightning-button>
 
-            <template if:true={openmodel}>
+        </div>
+
+            
+        <!--Modal-->
+            <template if:true={openmodal}>
                 <div class="demo-only" style="height: 640px;">
                     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
@@ -267,7 +273,7 @@
                                 </div>
                             </div>
                             <footer class="slds-modal__footer">
-                                <lightning-button label="Go back" variant="brand" onclick={closeModal}>
+                                <lightning-button label="Close" variant="brand" onclick={closeModal}>
                                 </lightning-button>
                             </footer>
                         </div>
@@ -275,6 +281,5 @@
                     <div class="slds-backdrop slds-backdrop_open"></div>
                 </div>
             </template>
-        </div>
     </div>
 </template>
